@@ -1,0 +1,121 @@
+body {
+    background-image: url("genom.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+
+.nav-link {
+    color: #ffffff;
+}
+
+.main {
+    position: absolute;
+    top: 17%;
+    left: 30%;
+    width: 435px;
+    border: 2px solid#ffffffa8;
+    padding: 0px;
+    background-color: rgb(44, 108, 151);
+    color: #000000;
+    border-radius: 12px;
+    padding-top: 80px;
+}
+
+.file::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+.file,
+input[type=button],
+#color {
+    width: 90%;
+    height: 70px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 17px;
+    border: 1px solid #ffffff;
+    letter-spacing: 2px;
+    border-radius: 10px;
+    background-color: rgba(95, 176, 230, 0.2);
+    color: #fff;
+    transition: .5s all;
+}
+
+.file {
+    width: 84%;
+    height: 55px;
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+.file:hover,
+input[type=button]:hover,
+#color:hover {
+    cursor: pointer;
+    background-color: #70af29;
+}
+
+
+.submit {
+    width: 84%;
+    height: 55px;
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+.submit:hover,
+input[type="submit"]:hover,
+#color:hover {
+    cursor: pointer;
+    background-color: #0307f0;
+}
+
+.submit,
+input[type="submit"],
+#color {
+    width: 90%;
+    height: 70px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 700;
+    border: 1px solid #000000;
+    letter-spacing: 2px;
+    border-radius: 30px;
+    background-color: rgba(6, 2, 235, 0.2);
+    color: #fff;
+    transition: .5s all;
+}
+
+.button {
+    width: 84%;
+    height: 55px;
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+.button:hover,
+input[type="button"]:hover,
+#color:hover {
+    cursor: pointer;
+    background-color: #04460f;
+}
+
+.button,
+input[type="button"],
+#color {
+    width: 90%;
+    height: 70px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 700;
+    border: 1px solid #000000;
+    letter-spacing: 2px;
+    border-radius: 45px;
+    background-color: rgba(0, 182, 24, 0.705);
+    color: #fff;
+    transition: .5s all;
+}
