@@ -39,24 +39,34 @@
             </ul>
         </div>
     </nav>
-    <center>
-        <div class="main">
-            <form enctype="multipart/form-data" method="post" action="">
+    <div class="main">
+        <center>
+            <h4 class="display-6 text-white">Download files</h4>
+        </center>
+        </br></br>
+        <center>
+            <form action="{% url 'download_optimal_solutions' %}" method="post">
                 {% csrf_token %}
-                <div class="fieldWrapper">
-                    {{ form.subject.errors }}
-                    <h4>Upload Tasks File :</h4>
-                    <div class="file"> {{ form.tasksFile }}</div>
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.subject.errors }}
-                    <h4>Upload Links File :</h4>
-                    <div class="file"> {{ form.linksFile }}</div>
-                </div>
-                <button type="submit" class="submit">Upload Files</button>
+                <button type="submit" value="{{optimal_sols_file}}" class="btn btn-light">Download
+                    'optimal_results_steps' file
+                </button>
             </form>
-        </div>
-    </center>
+        </center>
+        </br>
+        <center>
+            <!-- location.href -->
+            <form action="{% url 'download_all_solutions' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">Download
+                    'all_results_steps' file</button>
+            </form>
+        </center>
+        </br>
+
+    </div>
+    <!-- <button onclick="downloadOptimalSolutionsFile" type="button" class="btn btn-primary">Download optimal -->
+    <!-- solutions file</button> -->
+    <!-- <button type="button" class="btn btn-secondary">Secondary</button> -->
 </body>
 
 </html>

@@ -1,6 +1,9 @@
 from functools import reduce
 from math import floor
+import os
+from pathlib import Path
 import random
+import shutil
 from typing import IO
 
 # Define genetic algorithm parameters
@@ -215,76 +218,87 @@ def new_solution(parents):
     return mutation(child)
 
 
-def executeAlgorithm(tasks_file: IO, links_file: IO):
+def executeAlgorithm():
     global task_times, total_time, total_divided_by_steps, preqs
     preqs.clear()
     task_times.clear()
     total_time = 0
     total_divided_by_steps = 0
-    # Read task times from file
-    for line in tasks_file.readlines():
-        task, time = line.decode("utf-8").strip().split(",")
-        task_times[task] = int(time)
-        total_time += int(time)
 
-    # Read links between nodes from file
-    links = {}
-    for line in links_file.readlines():
-        task, link_str = line.decode("utf-8").strip().split(",")
-        # links[task] = link_str.split(";")
-        # task, link_str = line.strip().split(",")
-        if task in links.keys():
-            links[task] += [link_str]
-        else:
-            links[task] = [link_str]
-        if link_str in preqs.keys():
-            preqs[link_str] += [task]
-        else:
-            preqs[link_str] = [task]
+    tasks = Path(__file__).with_name("tasks.txt")
+    links = Path(__file__).with_name("links.txt")
+    with tasks.open("r") as tasks_file, links.open("r") as links_file:
+        # Read task times from file
+        for line in tasks_file.readlines():
+            task, time = line.split(",")
+            task_times[task] = int(time)
+            total_time += int(time)
 
-    total_divided_by_steps = round(total_time / SHIFTS_COUNT, 2)
+        # Read links between nodes from file
+        links = {}
+        for line in links_file.readlines():
+            task, link_str = line.split(",")
+            # links[task] = link_str.split(";")
+            # task, link_str = line.strip().split(",")
+            if task in links.keys():
+                links[task] += [link_str]
+            else:
+                links[task] = [link_str]
+            if link_str in preqs.keys():
+                preqs[link_str] += [task]
+            else:
+                preqs[link_str] = [task]
 
-    # Initialize the population randomly.
-    population: list[dict[int, list[str]]] = [get_pop() for _ in range(POPULATION_SIZE)]
+        total_divided_by_steps = round(total_time / SHIFTS_COUNT, 2)
 
-    best_fitness = 500.0
+        # Initialize the population randomly.
+        population: list[dict[int, list[str]]] = [
+            get_pop() for _ in range(POPULATION_SIZE)
+        ]
 
-    # Open output files
-    with open("all_results_steps.txt", "w") as all_solutions_file, open(
-        "optimal_results_steps.txt", "w"
-    ) as optimal_solutions_file:
-        optimal_solutions_file.truncate()
-        all_solutions_file.truncate()
-        evaluated_population: list[tuple[float, dict[int, list[str]]]] = []
-        for gen in range(NUM_GENERATIONS):
-            # calculate the fitness of each solution(item) in population
-            evaluated_population.clear()
-            for individual in population:
-                ind_fitness: float = fitness(individual)
-                formatted_solution = format_solution(individual)
+        best_fitness = 500.0
+        temp_dir = "/tmp/download_files"
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
+        # zip_file_path = f"{temp_dir}/result.zip"
+        os.makedirs(temp_dir, exist_ok=True)
 
-                all_solutions_file.write(f"{formatted_solution}\n")
+        # Open output files
+        with open(temp_dir + "/all_results_steps.txt", "w") as all_solutions_file, open(
+            temp_dir + "/optimal_results_steps.txt", "w"
+        ) as optimal_solutions_file:
+            optimal_solutions_file.truncate()
+            all_solutions_file.truncate()
+            evaluated_population: list[tuple[float, dict[int, list[str]]]] = []
+            for gen in range(NUM_GENERATIONS):
+                # calculate the fitness of each solution(item) in population
+                evaluated_population.clear()
+                for individual in population:
+                    ind_fitness: float = fitness(individual)
+                    formatted_solution = format_solution(individual)
 
-                if ind_fitness <= best_fitness:
-                    best_fitness = ind_fitness
-                    optimal_solutions_file.write(f"{formatted_solution}\n")
+                    all_solutions_file.write(f"{formatted_solution}\n")
 
-                evaluated_population.append((ind_fitness, individual))
+                    if ind_fitness <= best_fitness:
+                        best_fitness = ind_fitness
+                        optimal_solutions_file.write(f"{formatted_solution}\n")
 
-            evaluated_population.sort(key=lambda x: x[0])
-            print(
-                f"==== Generation {gen}: Best solution ==== {format_solution(evaluated_population[0][1])}\n"
-            )
+                    evaluated_population.append((ind_fitness, individual))
 
-            parents: list[dict[int, list[str]]] = [
-                population_info[1] for population_info in evaluated_population[:100]
-            ]
+                evaluated_population.sort(key=lambda x: x[0])
+                print(
+                    f"==== Generation {gen}: Best solution ==== {format_solution(evaluated_population[0][1])}\n"
+                )
 
-            # Create new population by crossover and mutation
-            offspring: list[dict[int, list[str]]] = []
-            for _ in range(POPULATION_SIZE):
-                offspring.append(new_solution(parents))
-            population = offspring
-        # all_solutions_file.close()
-        # optimal_solutions_file.close()
-        return optimal_solutions_file, all_solutions_file
+                parents: list[dict[int, list[str]]] = [
+                    population_info[1] for population_info in evaluated_population[:100]
+                ]
+
+                # Create new population by crossover and mutation
+                offspring: list[dict[int, list[str]]] = []
+                for _ in range(POPULATION_SIZE):
+                    offspring.append(new_solution(parents))
+                population = offspring
+            # all_solutions_file.close()
+            # optimal_solutions_file.close()
+            return optimal_solutions_file, all_solutions_file

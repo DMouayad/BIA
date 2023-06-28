@@ -10,22 +10,28 @@ body {
     color: #ffffff;
 }
 
+
 .main {
     position: absolute;
-    top: 17%;
-    left: 30%;
-    width: 435px;
+    /* top: 50%; */
+    /* left: 30%; */
+    /* width: 50%; */
     border: 2px solid#ffffffa8;
-    padding: 0px;
+    padding: auto;
     background-color: rgb(44, 108, 151);
     color: #000000;
     border-radius: 12px;
-    padding-top: 80px;
+    /* padding-top: 80px; */
+    /* padding-bottom: 80px; */
 }
 
 .file::-webkit-file-upload-button {
     visibility: hidden;
 }
+
+/* .btn { */
+/* margin-top: 20px; */
+/* } */
 
 .file,
 input[type=button],

@@ -1,37 +1,43 @@
 from io import TextIOWrapper
 import os
 import shutil
-from wsgiref.util import FileWrapper
 import zipfile
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.http import FileResponse, HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 from bia.services.algo import executeAlgorithm
-from .forms import UploadFilesForm
-
-downloading: bool = False
 
 
 def index(request: WSGIRequest):
-    global downloading
-    if request.method == "POST" and not downloading:
-        downloading = True
-        optimal_sol_file, all_sol_file = executeAlgorithm(
-            request.FILES["tasksFile"].file, request.FILES["linksFile"].file
-        )
-        response = downloadResultFiles(request, [optimal_sol_file, all_sol_file])
-        return response
-        # form = UploadFilesForm(data=request.FILES)
-    else:
-        downloading = False
-        form = UploadFilesForm(data={"tasksFile": "", "linksFile": ""})
-    context = {"form": form}
-    return render(request, "index.html", context)
+    optimal_sol_file, all_sol_file = executeAlgorithm()
+    print(optimal_sol_file)
+    return render(request, "index.html")
+
+
+def downloadOptimalSolutionsFile(request: WSGIRequest):
+    temp_dir = "/tmp/download_files"
+    file_path = temp_dir + "/optimal_results_steps.txt"
+    file_content = open(file_path, "r").read()
+
+    response = HttpResponse(file_content, content_type="text/plain")
+    response["Content-Disposition"] = 'attachment; filename="optimal_results_steps.txt"'
+    return response
+
+
+def downloadAllSolutions(request):
+    temp_dir = "/tmp/download_files"
+    file_path = temp_dir + "/all_results_steps.txt"
+    file_content = open(file_path, "r").read()
+
+    response = HttpResponse(file_content, content_type="text/plain")
+    response["Content-Disposition"] = 'attachment; filename="all_results_steps.txt"'
+    return response
 
 
 def downloadResultFiles(request, files: list[TextIOWrapper]):
     temp_dir = "/tmp/download_files"
-    shutil.rmtree(temp_dir)
+    if os.path.exists(temp_dir):
+        shutil.rmtree(temp_dir)
     zip_file_path = f"{temp_dir}/result.zip"
     os.makedirs(temp_dir, exist_ok=True)
 
